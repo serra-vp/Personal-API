@@ -28,6 +28,6 @@ You can find all the base stats of the hero by clicking the name in the list of 
 
 ## Built With
 
- - <a href="https://jquery.com/">jQuery</a>
- - <a href="https://stephanwagner.me/jBox/" title="jQuery alert plugin">jBox </a>
- - <a href="https://api.opendota.com/api">OpenDota API</a>
+ - <a href="https://jquery.com/" target="_blank">jQuery</a>
+ - <a href="https://stephanwagner.me/jBox/" title="jQuery alert plugin" target="_blank">jBox </a>
+ - <a href="https://api.opendota.com/api" target="_blank">OpenDota API</a>
