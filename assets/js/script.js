@@ -90,7 +90,7 @@ $(document).ready(function(){
                   });
             }
             $('#hero-list-tbody').html(heroRow);
-            $('.search-bar').val('');
+            // $('.search-bar').val('');
          });
     }
 
@@ -185,23 +185,28 @@ $(document).ready(function(){
         
     }
 
-    $('.search-bar').on('keypress', (e) => {
+    $('.search').on('keypress', '#search-hero', (e) => {
         if(e.keyCode == '13'){ 
             searchJson($('.search-bar').val());
         }
     });
 
-    $('.search-btn').on('click', function(){
+    $('.search').on('click', '#hero-btn', function(){
         searchJson($('.search-bar').val());
+    });
+
+    $('.search').on('keypress', '#search-player', (e) => {
+        if(e.keyCode == '13'){ 
+            getPlayerDetails($('.search-bar').val());
+        } 
+    });
+
+    $('.search').on('click', '#player-btn', function(){
+        getPlayerDetails($('.search-bar').val());
     });
 
     $('#hero-list').on('click', '#heroName', function(){
         getHeroDetails($(this).parent().attr('id')); 
-    });
-
-    $('#heroModal').on('click', '#close', function(){
-        //$('#heroModal').remove();
-        alert("closed");
     });
 
     $('#hero-reset').on('click', function(){
@@ -209,5 +214,163 @@ $(document).ready(function(){
         getHeroes();
     });
 
-    
+    // Player Infos
+
+    $('#navigation').on('click', '#link', function(){
+        if($(this).text() == 'Players'){
+            $(this).prev().removeClass('active');
+            $(this).addClass('active');
+            $('.heroes-div').css('display', 'none');
+            $('.player-div').css('display', 'flex');
+            $('.search-bar').attr('id', 'search-player');
+            $('.search-btn').attr('id', 'player-btn');
+            $('.search-bar').attr('placeholder', 'steam ID/Account ID');
+            $('.search-bar').val('');
+            
+        }else{
+            $(this).next().removeClass('active');
+            $(this).addClass('active');
+            $('.heroes-div').css('display', 'flex');
+            $('.player-div').css('display', 'none');
+            $('.search-bar').attr('id', 'search-hero');
+            $('.search-btn').attr('id', 'hero-btn');
+            $('.search-bar').attr('placeholder', 'Search Hero/Attribute Type ...');
+            $('.search-bar').val('');
+        }
+    });
+
+    function playerPos(pos){
+        if(pos == 1){
+            return "Safe Lane";
+        }else if(pos == 2){
+            return "Mid Lane";
+        }else if(pos == 3){
+            return "Offlane";
+        }else if(pos == 4){
+            return "Support";
+        }else{
+            return "Hard Support";
+        }
+    }
+
+    function matchResult(res){
+        if(res == false){
+            return "Lose";
+        }else{
+            return "Win";
+        }
+    }
+
+    function getPlayerDetails(id){
+        let tempPlayer, tempHistory, outputHead = '', tempPlayer2, outputHead2='', outputMatches='', tempMatches, duration;
+        fetch('https://api.opendota.com/api/players/'+id)
+        .then((response) => response.json())
+        .then((playerData) => {
+
+            let testHead = `
+            <table id="match-history">
+                <caption><h1>Recent Matches</h1></caption>
+                <thead>
+                    <th>Match ID</th>
+                    <th>Position</th>
+                    <th>Result</th>
+                    <th>Duration</th>
+                    <th><h1>K</h1></th>
+                    <th><h1>D</h1></th>
+                    <th><h1>A</h1></th>
+                    <th>XPM</th>
+                    <th>GPM</th>
+                    <th>Last Hits</th>
+                </thead>
+                <tbody id="match-history-tbody">      
+                </tbody>
+            </table>
+            `;
+
+            tempPlayer = playerData;
+            outputHead += `
+                <div class="player-avatar">
+                    <img src="${playerData.profile.avatarfull}" alt="avatar">
+                </div>
+                <div class="row-header">
+                    <div class="inline-header">
+                        <div class="player-name">
+                            <h1>${tempPlayer.profile.personaname}</h1>
+                        </div>
+                        <div class="player-id">
+                            <div class="id">
+                                <h1><span>Account ID:</span>${tempPlayer.profile.account_id}</h1>
+                            </div>
+                            <div class="id">
+                                <h1><span>Steam ID:</span><a href="${tempPlayer.profile.profileurl}" target="_blank">${tempPlayer.profile.steamid}</a></h1>
+                            </div>
+                        </div>
+                        <div class="last-login">
+                            <h1><span>Last Login: &emsp;</span>${tempPlayer.profile.last_login}</h1>
+                        </div> 
+                        <div class="ccode-emmr">
+                            <div class="ccode">
+                                <h1><span>Country: &emsp;</span>${tempPlayer.profile.loccountrycode}</h1>
+                            </div>
+                            <div class="emmr">
+                                <h1><span>Estimated MMR: &emsp;</span>${tempPlayer.mmr_estimate.estimate}</h1>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;   
+            $('.player-info').html(testHead);
+            $('.player-info-header').html(outputHead);
+        });   
+        
+        fetch('https://api.opendota.com/api/players/'+id+'/totals')
+        .then((response) => response.json())
+        .then((playerAddData) => {
+            tempPlayer2 = playerAddData;
+            outputHead2 += `
+            <div class="inline-header">
+                <div class="total">
+                    <h1><span>Kills: &emsp;</span>${tempPlayer2[0].sum}</h1>
+                </div>
+                <div class="total">
+                    <h1><span>Deaths: &emsp;</span>${tempPlayer2[1].sum}</h1>
+                </div>
+                <div class="total">
+                    <h1><span>Assists: &emsp;</span>${tempPlayer2[2].sum}</h1>
+                </div>
+                <div class="total">
+                    <h1><span>Last Hits: &emsp;</span>${tempPlayer2[6].sum}</h1>
+                </div>
+                <div class="total">
+                    <h1><span>Denies: &emsp;</span>${tempPlayer2[7].sum}</h1>
+                </div>
+            </div>
+            `;
+            $('.row-header').append(outputHead2);
+        });
+
+        fetch('https://api.opendota.com/api/players/'+id+'/recentMatches')
+        .then((response) => response.json())
+        .then((playerHistory) => {
+            tempMatches = playerHistory;
+            tempMatches.map((historyData) => {
+                duration = historyData.duration /60;
+                outputMatches += `
+                <tr>
+                    <td>${historyData.match_id}</td>
+                    <td>${playerPos(historyData.player_slot)}</td>
+                    <td>${matchResult(historyData.radiant_win)}</td>
+                    <td>${duration.toFixed(2)} mins</td>
+                    <td>${historyData.kills}</td>
+                    <td>${historyData.deaths}</td>
+                    <td>${historyData.assists}</td>
+                    <td>${historyData.xp_per_min}</td>
+                    <td>${historyData.gold_per_min}</td>
+                    <td>${historyData.last_hits}</td>
+                </tr>
+                `;
+            });
+            $('#match-history-tbody').append(outputMatches);
+        });
+    }
 });
