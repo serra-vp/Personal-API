@@ -17,10 +17,11 @@
         </div>
         <nav id="navigation">
             <a class="active" id="link" href="#heroes-div">Heroes</a>
+            <a id="link" href="#players-div">Players</a> 
         </nav>
         <div class="search">
-            <input type="text" class="search-bar" placeholder="Search Hero/Attribute Type ...">
-            <button class="search-btn" title="search"><i class="fa fa-search"></i></button>
+            <input type="text" class="search-bar" id="search-hero" placeholder="Search Hero/Attribute Type ...">
+            <button class="search-btn" id="hero-btn" title="search"><i class="fa fa-search"></i></button>
         </div>
     </header>
     <main>
@@ -38,10 +39,19 @@
                     </tbody>
                 </table>
             </div> 
+            <!-- Comment player -->
+            <div class="player-div" id="player-div"> 
+                <div class="player-info-header">
+                    <h1 class="info">Please Input an account ID or Steam ID at the top right! :)</h1>
+                </div>
+                <div class="player-info">
+                    
+                </div>
+            </div>
         </div>
     </main>
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/StephanWagner/jBox@v1.0.5/dist/jBox.all.min.js"></script>    
+    <script src="https://cdn.jsdelivr.net/gh/StephanWagner/jBox@v1.0.5/dist/jBox.all.min.js"></script> 
     <script src="assets/js/script.js"></script>
 </body>
 </html>
